@@ -30,47 +30,123 @@
 
 🌞 **Balancez l'URL de ce dépôt `broken_webapp` dans le compte-rendu Markdown**
 
+> [Lien Repo](https://gitlab.com/Cub1tuS/broken_webapp/)
 ## 2. Grab the code
 
 🌞 **Récupérez le code**
 
-- uniquement avec des commandes shell ~bande de noobs~ que vous me mettez dans le compte-rendu
-- le code est dans ce dépôt git, à côté des fichiers markdown pour le TP, dans le sous-dossier [**`app/` ici**]
+```bash
+dorian@Air-de-Dorian broken_webapp % git clone https://gitlab.com/it4lik/b3-devsecops-2024.git
+Cloning into 'b3-devsecops-2024'...
+remote: Enumerating objects: 141, done.
+remote: Counting objects: 100% (78/78), done.
+remote: Compressing objects: 100% (76/76), done.
+remote: Total 141 (delta 30), reused 0 (delta 0), pack-reused 63 (from 1)
+Receiving objects: 100% (141/141), 2.58 MiB | 5.69 MiB/s, done.
+Resolving deltas: 100% (41/41), done.
+dorian@Air-de-Dorian broken_webapp % ls
+b3-devsecops-2024	README.md
+dorian@Air-de-Dorian broken_webapp % mv b3-devsecops-2024 ../.
+dorian@Air-de-Dorian broken_webapp % cp -r ../b3-devsecops-2024/tp/1/app/* .
+dorian@Air-de-Dorian broken_webapp % cp -r ../b3-devsecops-2024/tp/1/app/.* .
+
+```
 
 🌞 **Lancez le code, histoire de voir ce qu'il fait**
 
-- un simple `docker compose up` depuis le dossier qui contient le `docker-compose.yml` devrait suffire
-- prouvez avec un `curl` que vous pouvez visiter l'application
+```bash 
+docker compose up
+curl localhost:8080
+dorian@Air-de-Dorian app % curl localhost:8080
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Home</title>
+  </head>
+  <body>
+    
+      <h1>Welcome to My Flask App</h1>
+      <p><a href="/login">Log In</a></p>
+    
+  </body>
+</html>
+```
+> J'ai modifié le port par défaut car déjà prit de mon côté
 
 🌞 **Connectez-vous sur la WebUI**
 
-- des users ont été créés en base de données au moment de votre `docker compose up`
-- cherchez où et comment ils ont été créés (c'est dans le dossier `app/` quelque part hein) automatiquement, pour apprendre un couple de user/password qui existe :)
-- prouvez avec un `curl` que vous arrivez à vous connecter
+```bash
+dorian@Air-de-Dorian db % cat seed.sql 
+USE broken_webapp;
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL
+);
 
-> Si vous vous connectez en navigateur d'abord (recommandé), vous pouvez récupérer la requête qu'a fait votre navigateur sous forme de requête `curl`, c'est idéal pour rejouer une requête de connexion comme celle-ci. Demandez à Google ou Gepetto, ça se fait depuis la console du navigateur, onglet "Réseau".
+INSERT INTO users (username, password)
+VALUES ('alice', 'alice'), ('bob', 'bob'), ('meo', 'meo');
+```
+
+```bash
+dorian@Air-de-Dorian db % curl -X POST -d "username=alice&password=alice" localhost:8080/login
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/dashboard">/dashboard</a>. If not, click the link.
+dorian@Air-de-Dorian db % curl -X POST -d "username=alice&password=alice" localhost:8080/login
+<!doctype html>
+<html lang=en>
+<title>Redirecting...</title>
+<h1>Redirecting...</h1>
+<p>You should be redirected automatically to the target URL: <a href="/dashboard">/dashboard</a>. If not, click the link.
+```
 
 🌞 **`add`, `commit`, `push`**
 
-- poussez tout le contenu de mon dossier `app/` dans le dépôt `broken_webapp` que vous avez créé
-- u know what to do, j'veux les commandes dans le compte-rendu
-  - allez on est sur un TP avec `git` au coeur de toutes les opérations, essayez de pas faire des messages de commits trop nazes :d
-- vous devez conserver l'architecture du dossier `app/` dans votre dépôt
-  - fichier `Dockerfile` à la racine
-  - fichier `docker-compose.yml` à la racine
-  - dossier `src/` qui contient le code
+```bash
+dorian@Air-de-Dorian broken_webapp % git add Dockerfile docker-compose.yml src/
+dorian@Air-de-Dorian broken_webapp % git commit -m "push app" 
+[main 9a5a778] push app
+ 6 files changed, 177 insertions(+)
+ create mode 100644 Dockerfile
+ create mode 100644 docker-compose.yml
+ create mode 100644 src/app.py
+ create mode 100644 src/templates/dashboard.html
+ create mode 100644 src/templates/home.html
+ create mode 100644 src/templates/login.html
+
+dorian@Air-de-Dorian broken_webapp % git push
+Enumerating objects: 11, done.
+Counting objects: 100% (11/11), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (10/10), 2.74 KiB | 2.74 MiB/s, done.
+Total 10 (delta 0), reused 0 (delta 0), pack-reused 0
+To gitlab.com:Cub1tuS/broken_webapp.git
+   c6f36e0..9a5a778  main -> main
+```
 
 ➜ **A la racine du dépôt, vous devriez donc avoir :**
 
-- votre `README.md`
-- fichier `Dockerfile`
-- fichier `docker-compose.yml`
-- un dossier `src` (qui contient tout le code)
-- kom sa koa :
+```bash
+dorian@Air-de-Dorian broken_webapp % git add .env db/ requirements.txt 
+dorian@Air-de-Dorian broken_webapp % git commit -m "push app second time"
+[main fd07771] push app second time
+ 3 files changed, 17 insertions(+)
+ create mode 100644 .env
+ create mode 100644 db/seed.sql
+ create mode 100644 requirements.txt
+dorian@Air-de-Dorian broken_webapp % git push
+```
 
 ```bash
-❯ ls
-docker-compose.yml  Dockerfile  README.md  src
+dorian@Air-de-Dorian broken_webapp % ls -a
+.			.git			Dockerfile		src
+..			db			README.md
+.env			docker-compose.yml	requirements.txt
 ```
 
 ## 3. Gitlab Runner
@@ -87,10 +163,6 @@ Concrètement :
 
 Avant de pouvoir lancer nos premiers tests automatisés, il faut donc qu'on installe et configure un *Runner GitLab*.
 
-On va faire ça sur une VM Rocky locale, vous pouvez faire chauffer VirtualBox.
-
-![Gitlab CI/CD](./img/logo_gitlab_cicd.png
-
 ### B. Install and conf
 
 ➜ **Allumez une VM Rocky**
@@ -99,12 +171,36 @@ On va faire ça sur une VM Rocky locale, vous pouvez faire chauffer VirtualBox.
 
 🌞 **Installer Docker**
 
-- [suivez la doc officielle](https://docs.docker.com/engine/install/centos/) pour installer Docker SVP :'(
-- `start` et `enable` le service `docker.service`
-
-> En effet, le *Runner Gitlab* va utiliser Docker pour lancer les tests ! Pour lancer un test, le *Runner* récupère le code du dépôt Git dans un conteneur éphémère, il effectue les tests, et le conteneur est détruit à la fin des tests. La conteneurisation trouve ici un cas d'utilisation de fou : c'est juste trop pratique de pouvoir lancer des ptits conteneurs à la volée, pour effectuer des tests dedans, et détruire après :)
+```
+sudo dnf -y install dnf-plugins-core
+sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo systemctl enable --now docker
+```
 
 🌞 **Installer un Runner Gitlab**
+
+```
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+```
+
+```
+sudo dnf install gitlab-runner
+```
+
+```
+sudo gitlab-runner register \
+  --non-interactive \
+  --url "https://gitlab.com/" \
+  --token "$RUNNER_TOKEN" \
+  --executor "docker" \
+  --docker-image debian:latest \
+  --description "docker-runner"
+```
+
+```
+systemctl enable --now gitlab-runner.service
+```
 
 - [suivez la doc officielle](https://docs.gitlab.com/runner/install/)
 - je vous recommande de l'installer directement sur la machine hôte (pas de l'installer avec Docker)
@@ -147,10 +243,26 @@ meow-job:
 
 🌞 **`add`, `commit`, `push`**
 
+```
+dorian@Air-de-Dorian broken_webapp % nano gitlab-ci.yml
+dorian@Air-de-Dorian broken_webapp % git add gitlab-ci.yml 
+dorian@Air-de-Dorian broken_webapp % git commit -m  "add gitlab"
+[main 31f7a9e] add gitlab
+ 1 file changed, 13 insertions(+)
+ create mode 100644 gitlab-ci.yml
+dorian@Air-de-Dorian broken_webapp % git push
+Enumerating objects: 4, done.
+Counting objects: 100% (4/4), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 403 bytes | 403.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0
+To gitlab.com:Cub1tuS/broken_webapp.git
+   fd07771..31f7a9e  main -> main
+```
+
 - pour ajouter le fichier `gitlab-ci.yml` au dépôt
 - un message de commit psa tout pourri encore svp :ddd
-
-![Break the build](./img/dont_always_commit.jpg)
 
 ➜ **RDV sur la WebUI de GitLab**
 
@@ -173,6 +285,7 @@ meow-job:
                 ||     ||
 ```
 
+> JOB REUSSI !!
 ## Go next
 
 👉 [**Gogogo partie 2 : Test then Build**](./part2.md)
